@@ -13,7 +13,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "cors": "^2.8.5",
-    "resend": "^0.3.0",
+    "resend": "^4.3.0",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
