@@ -1,21 +1,31 @@
-const express = require("express");
-const cors = require("cors");
-const { Resend } = require("resend"); // or use Nodemailer if preferred
+import express, { Request, Response } from "express";
+import cors from "cors";
+import { Resend } from "resend";
+import dotenv from "dotenv";
+
+dotenv.config(); // Load env variables from .env file (optional for local dev)
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// CORS setup to allow frontend from your domain
 app.use(cors());
 app.use(express.json());
 
-const resend = new Resend(process.env.RESEND_API_KEY); // store in Railway env
+const resend = new Resend(process.env.RESEND_API_KEY as string);
 
-app.post("/send-email", async (req, res) => {
+interface LeadRequestBody {
+  name: string;
+  email: string;
+  phone: string;
+  project: string;
+  message: string;
+}
+
+app.post("/send-email", async (req: Request<{}, {}, LeadRequestBody>, res: Response) => {
   const { name, email, phone, project, message } = req.body;
 
   try {
-    // Send email to you
+    // Email to yourself/team
     await resend.emails.send({
       from: "Live In Dapoli <onboarding@resend.dev>",
       to: ["mayur@radon-media.com", "lakeer@radon-media.com"],
@@ -44,12 +54,12 @@ app.post("/send-email", async (req, res) => {
     });
 
     res.status(200).json({ success: true });
-  } catch (err) {
-    console.error("Error sending email:", err);
+  } catch (error) {
+    console.error("Error sending emails:", error);
     res.status(500).json({ error: "Failed to send emails" });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
